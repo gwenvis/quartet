@@ -25,3 +25,10 @@
 /processorParam:TextureFormat=Color
 /build:card.png
 
+#begin spritefont.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:spritefont.spritefont
+

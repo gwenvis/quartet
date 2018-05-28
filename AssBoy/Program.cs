@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AssBoy.Desktop
+namespace Kwartet.Desktop
 {
     /// <summary>
     /// The main class.

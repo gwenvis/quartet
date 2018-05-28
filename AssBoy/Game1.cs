@@ -1,16 +1,22 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using System.Linq;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace AssBoy.Desktop
+namespace Kwartet.Desktop
 {
     /// <summary>
-    /// This is the main type for your game.
+    /// This is the mains     type for your game.
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        private WebServer server;
+        private Desktop.Game _game;
+
+        private SpriteFont font;
 
         public Game1()
         {
@@ -27,7 +33,17 @@ namespace AssBoy.Desktop
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            server = new WebServer();
+            _game = new Game(server, Content);
+            
+            _game.Start();
+            
+            server.Subscribe(ServerStatusHandler.ServerStatuses.Join, (a) =>
+            {
+                _game.PlayerJoin(new Player(server.Server, a.Data["name"].ToString(), a.ID));
+                Console.WriteLine(a.Data["name"].ToString());
+            });
+            
             base.Initialize();
         }
 
@@ -39,6 +55,7 @@ namespace AssBoy.Desktop
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            font = Content.Load<SpriteFont>("spritefont");
             // TODO: use this.Content to load your game content here
         }
 
@@ -74,8 +91,18 @@ namespace AssBoy.Desktop
         {
             GraphicsDevice.Clear(Color.YellowGreen);
 
-            // TODO: Add your drawing code here
-
+            spriteBatch.Begin();
+            string names = "";
+            _game._playersConnected.ForEach(x=>names += x.Name + "\n");
+            spriteBatch.DrawString(font, names, new Vector2(2),Color.Black);
+            if(server.Hosting)
+                spriteBatch.DrawString(font,
+                    server.DisplayIPAdress,
+                    new Vector2((float)GraphicsDevice.Viewport.Width / 2,
+                        (float)GraphicsDevice.Viewport.Height / 2),
+                    Color.Black);
+            spriteBatch.End();
+            
             base.Draw(gameTime);
         }
     }

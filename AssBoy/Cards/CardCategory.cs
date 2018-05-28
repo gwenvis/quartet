@@ -1,8 +1,7 @@
-﻿namespace AssBoy.Desktop.Cards
+﻿namespace Kwartet.Desktop.Cards
 {
     public enum CardCategory
     {
-        Diseases,
         Teachers,
         Places,
         Movies
