@@ -1,5 +1,8 @@
 ﻿using System;
+using System.CodeDom;
 using System.Linq;
+using Kwartet.Desktop.Core;
+using Kwartet.Desktop.Scenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -13,10 +16,13 @@ namespace Kwartet.Desktop
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        
         private WebServer server;
         private Desktop.Game _game;
-
-        private SpriteFont font;
+        private SceneManager SceneManager { get; set; }
+        
+        public static SpriteFont font { get; private set; }
+        public RenderTarget2D renderTarget { get; private set; }
 
         public Game1()
         {
@@ -34,17 +40,35 @@ namespace Kwartet.Desktop
         {
             // TODO: Add your initialization logic here
             server = new WebServer();
-            _game = new Game(server, Content);
-            
+            renderTarget = new RenderTarget2D(GraphicsDevice, 1280, 720);
+            Screen.InitScreen(renderTarget);
+            _game = new Game(server, Content);            
             _game.Start();
             
-            server.Subscribe(ServerStatusHandler.ServerStatuses.Join, (a) =>
+            server.Subscribe(ClientToServerStatus.Join, (a) =>
             {
-                _game.PlayerJoin(new Player(server.Server, a.Data["name"].ToString(), a.ID));
-                Console.WriteLine(a.Data["name"].ToString());
+                if (_game._playersConnected.Count >= 4)
+                {
+                    DropConnection(a);
+                    return;
+                }
+                int playerNum = _game.PlayerJoin(new Player(server.Server, a.Data["name"].ToString(), a.ID));
+                var joinInfo = new ServerStatusHandler.JoinInfo(playerNum);
+                string json = new 
+                    ServerStatusHandler.ServerMessage<ServerStatusHandler.JoinInfo>
+                    (ServerToClientStatuses.Unknown, joinInfo).Build();
+                a.ServerStatus.Send(json);
             });
             
             base.Initialize();
+        }
+
+        private void DropConnection(ServerStatusHandler.ClientMessage clientMessage)
+        {
+            clientMessage.ServerStatus.Send(
+                new ServerStatusHandler.ServerMessage
+                    <ServerStatusHandler.EmptyInfo>(ServerToClientStatuses.DropConnection, new ServerStatusHandler.EmptyInfo()).Build());
+            clientMessage.ServerStatus.DropConnection();
         }
 
         /// <summary>
@@ -57,6 +81,9 @@ namespace Kwartet.Desktop
             spriteBatch = new SpriteBatch(GraphicsDevice);
             font = Content.Load<SpriteFont>("spritefont");
             // TODO: use this.Content to load your game content here
+            
+            SceneManager = new SceneManager(Content, GraphicsDevice, spriteBatch, _game, server);
+            SceneManager.SwitchScene(typeof(MainMenu));
         }
 
         /// <summary>
@@ -78,7 +105,9 @@ namespace Kwartet.Desktop
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            Scene scene = SceneManager.CurrentScene;
+
+            scene?.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -89,18 +118,23 @@ namespace Kwartet.Desktop
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            GraphicsDevice.SetRenderTarget(renderTarget);
             GraphicsDevice.Clear(Color.YellowGreen);
-
+            
+            Scene scene = SceneManager.CurrentScene;
             spriteBatch.Begin();
             string names = "";
+            
             _game._playersConnected.ForEach(x=>names += x.Name + "\n");
-            spriteBatch.DrawString(font, names, new Vector2(2),Color.Black);
-            if(server.Hosting)
-                spriteBatch.DrawString(font,
-                    server.DisplayIPAdress,
-                    new Vector2((float)GraphicsDevice.Viewport.Width / 2,
-                        (float)GraphicsDevice.Viewport.Height / 2),
-                    Color.Black);
+
+            scene?.Draw(gameTime);
+            
+            spriteBatch.End();
+            
+            GraphicsDevice.SetRenderTarget(null);
+            
+            spriteBatch.Begin();
+            spriteBatch.Draw(renderTarget, GraphicsDevice.Viewport.TitleSafeArea, Color.White);
             spriteBatch.End();
             
             base.Draw(gameTime);

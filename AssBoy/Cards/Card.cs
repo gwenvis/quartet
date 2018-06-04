@@ -1,4 +1,5 @@
-﻿using Kwartet.Desktop.Core;
+﻿using System;
+using Kwartet.Desktop.Core;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Kwartet.Desktop.Cards
@@ -18,18 +19,20 @@ namespace Kwartet.Desktop.Cards
             Category = category;
 
             string spritename = string.Join("-", name.ToLower().Split(' '));
-            //cardImageTexture = Game.Content.Load<Texture2D>(spritename);
-            //if (cardTemplateTexture == null) cardTemplateTexture = Game.Content.Load<Texture2D>("template");
+            try
+            {
+                cardImageTexture = Game.Content.Load<Texture2D>(spritename);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Card :: {spritename} could not be loaded.");
+            }
+            if (cardTemplateTexture == null) cardTemplateTexture = Game.Content.Load<Texture2D>("card");
         }
 
         public void SetSameCategorySet(Card[] cards)
         {
             SameCategoryCards = cards;
-        }
-
-        public override void Draw(SpriteBatch sb)
-        {
-            
         }
 
         public override string ToString()

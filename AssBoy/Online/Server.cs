@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Linq;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WebSocketSharp;
@@ -18,7 +20,7 @@ namespace Kwartet.Desktop
         public string DisplayIPAdress;
         
         private WebSocketServer _webSocketServer;
-        private Dictionary<ServerStatusHandler.ServerStatuses, 
+        private Dictionary<ClientToServerStatus, 
             Action<ServerStatusHandler.ClientMessage>> subscriptions;
 
         public void StartServer()
@@ -48,11 +50,12 @@ namespace Kwartet.Desktop
             // make a new ClientMessage
             var clientMessage = new ServerStatusHandler.ClientMessage();
             clientMessage.ID = ID;
+            clientMessage.ServerStatus = server;
             
             // Parse the status 
-            ServerStatusHandler.ServerStatuses status;
+            ClientToServerStatus status;
             if (!Enum.TryParse(clientMessageJObject["status"].ToString(), true, out status))
-                status = ServerStatusHandler.ServerStatuses.Unknown;
+                status = ClientToServerStatus.Unknown;
             
             // Get the data object
             clientMessage.Data = clientMessageJObject["data"];
@@ -61,10 +64,10 @@ namespace Kwartet.Desktop
             action?.Invoke(clientMessage);
         }
 
-        public void Subscribe(ServerStatusHandler.ServerStatuses status, Action<ServerStatusHandler.ClientMessage> subAction)
+        public void Subscribe(ClientToServerStatus status, Action<ServerStatusHandler.ClientMessage> subAction)
         {
             if(subscriptions == null) subscriptions = new 
-                Dictionary<ServerStatusHandler.ServerStatuses, Action<ServerStatusHandler.ClientMessage>>();
+                Dictionary<ClientToServerStatus, Action<ServerStatusHandler.ClientMessage>>();
 
             Action<ServerStatusHandler.ClientMessage> action;
             if (subscriptions.TryGetValue(status, out action))
@@ -96,6 +99,26 @@ namespace Kwartet.Desktop
         protected override void OnMessage(MessageEventArgs e)
         {
             OnMessageReceived?.Invoke(e, this, ID);
+        }
+
+        public new void Send(byte[] data)
+        {
+            base.Send(data);
+        }
+
+        public new void Send(FileInfo fileInfo)
+        {
+            base.Send(fileInfo);
+        }
+
+        public new void Send(string data)
+        {
+            base.Send(data);
+        }
+
+        public void DropConnection()
+        {
+            Task.Factory.StartNew(() => Context.WebSocket.Close());
         }
     }
 }

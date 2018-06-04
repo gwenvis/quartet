@@ -54,9 +54,10 @@ namespace Kwartet.Desktop
             }
         }
 
-        public void PlayerJoin(Player player)
+        public int PlayerJoin(Player player)
         {
             _playersConnected.Add(player);
+            return _playersConnected.Count;
         }
         
         private void MakeCards()
@@ -65,7 +66,7 @@ namespace Kwartet.Desktop
             {
                 new Card(CardCategory.Teachers, "Jelle"),
                 new Card(CardCategory.Teachers, "Ed"),
-                new Card(CardCategory.Teachers, "Erwin"),
+                new Card(CardCategory.Teachers, "Silvan"),
                 new Card(CardCategory.Teachers, "Richard"),
                 
                 new Card(CardCategory.Movies, "Forrest Grump"),

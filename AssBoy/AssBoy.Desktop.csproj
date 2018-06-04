@@ -47,6 +47,8 @@
     <Compile Include="Cards\CardCategory.cs" />
     <Compile Include="Core\Entity.cs" />
     <Compile Include="Core\Scene.cs" />
+    <Compile Include="Core\SceneManager.cs" />
+    <Compile Include="Core\Screen.cs" />
     <Compile Include="JsonWriter.cs" />
     <Compile Include="Online\Game.cs" />
     <Compile Include="Online\Player.cs" />
@@ -55,6 +57,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scenes\MainMenu.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">

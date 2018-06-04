@@ -5,20 +5,133 @@ using Newtonsoft.Json.Linq;
 namespace Kwartet.Desktop
 {
     public class ServerStatusHandler
-    {
-        public enum ServerStatuses
-        {
-            Join,
-            Disconnect,
-            Question,
-            Unknown
-        }
-        
+    {   
+        /// <summary>
+        /// Extracted message sent from a client.
+        /// </summary>
         public struct ClientMessage
         {
-            public Server Status { get; set; }
+            public Server ServerStatus { get; set; }
             public JToken Data { get; set; }
             public string ID { get; set; }
         }
+        
+        /// <summary>
+        /// Message data that the server will send.
+        /// </summary>
+        public struct ServerMessage<T> where T : struct
+        {
+            [JsonProperty("status"),
+            JsonConverter(typeof(StringEnumConverter))]
+            public ServerToClientStatuses status;
+            [JsonProperty("data")]
+            public T data;
+            
+            public ServerMessage(ServerToClientStatuses status, T data)
+            {
+                this.status = status;
+                this.data = data;
+            }
+
+            public string Build()
+            {
+                return JsonConvert.SerializeObject(this);
+            }
+        }
+
+        public struct JoinInfo
+        {
+            [JsonProperty("id")]
+            private int id;
+
+            public JoinInfo(int id)
+            {
+                this.id = id;
+            }
+        }
+        
+        public struct EmptyInfo { }
+    }
+
+    /// <summary>
+    /// Messages from the client to the server.
+    /// </summary>
+    public enum ClientToServerStatus
+    {
+        /// <summary>
+        /// Someone joins the game.
+        /// </summary>
+        Join,
+        
+        /// <summary>
+        /// Someone disconnects from the game.
+        /// </summary>
+        Disconnect,
+        
+        /// <summary>
+        /// The host requests to start the game.
+        /// </summary>
+        StartGame,
+        
+        /// <summary>
+        /// A client asks for a card.
+        /// </summary>
+        Question,
+        
+        /// <summary>
+        /// Client requests that are unknown. They are
+        /// </summary>
+        Unknown
+    }
+    
+    /// <summary>
+    /// Messages from the server to the client
+    /// </summary>
+    public enum ServerToClientStatuses
+    {
+        /// <summary>
+        /// Send to all players, included with a name of the player that won.
+        /// If it's a tie, it will send the same, but instead with the players that have the
+        /// same amount of quartets.
+        /// </summary>
+        Win,
+        
+        /// <summary>
+        /// Send to a player when he receives a card. (Only that player)
+        /// </summary>
+        GetCard,
+        
+        /// <summary>
+        /// When a player gives a card to another. (This will be sent in combination with GetCard.)
+        /// </summary>
+        GiveCard,
+        
+        /// <summary>
+        /// When a player has a quartet, automatically remove all the cards in that category.
+        /// The quartet will be displayed on the game screen.
+        /// </summary>
+        GotQuartet,
+        
+        /// <summary>
+        /// When the turn has ended, send this to the player whos turn has ended.
+        /// This will be send in combination with TurnStarted. Not at the same time, but in order.
+        /// </summary>
+        TurnEnded,
+        
+        /// <summary>
+        /// When the player's turn has started, send this to the player whose turn has started.
+        /// </summary>
+        TurnStarted,
+        
+        /// <summary>
+        /// Send this to the player when the connection has dropped.
+        /// </summary>
+        DropConnection,
+        
+        /// <summary>
+        /// Unknown data.
+        /// </summary>
+        Unknown
+        
     }
 }
