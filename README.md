@@ -16,4 +16,3 @@ Contributors:
 Software/talen gebruikt:
   - Visual Studio
   - MonoGame
-  - NodeJS
