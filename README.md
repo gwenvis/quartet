@@ -9,7 +9,7 @@ Contributors:
 
     https://docs.google.com/presentation/d/1aiOqxanbgnC7Jiv5hfRYV8YSR2mZAFUWqbYjQsOXilQ/edit?usp=sharing
 
-  - Kwartetten via de telefoon met andere mensen.
+  - Kwartetten via de het Internet met andere mensen.
   - Online multiplayer
 
 
