@@ -11,9 +11,11 @@ Contributors:
 
   - Kwartetten via de het Internet met andere mensen.
   - Online multiplayer
+  - yep
 
 
 Software/talen gebruikt:
   - C#
-  - Visual Studio
+  - Visual Studio / Rider
   - MonoGame
+  - HTML5
