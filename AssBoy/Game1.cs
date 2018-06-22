@@ -52,11 +52,13 @@ namespace Kwartet.Desktop
                     DropConnection(a);
                     return;
                 }
-                int playerNum = _game.PlayerJoin(new Player(server.Server, a.Data["name"].ToString(), a.ID));
+
+                ConnectionInfo info = server.AddUser(a.ID, a.ServerStatus);
+                int playerNum = _game.PlayerJoin(new Player(info, a.Data["name"].ToString()));
                 var joinInfo = new ServerStatusHandler.JoinInfo(playerNum);
                 string json = new 
                     ServerStatusHandler.ServerMessage<ServerStatusHandler.JoinInfo>
-                    (ServerToClientStatuses.Unknown, joinInfo).Build();
+                    (ServerToClientStatuses.JoinInfo, joinInfo).Build();
                 a.ServerStatus.Send(json);
             });
             

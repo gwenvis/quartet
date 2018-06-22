@@ -24,9 +24,9 @@ namespace Kwartet.Desktop
         
         public Game(WebServer server, ContentManager content)
         {
-            MakeCards();
             Content = content;
             _server = server;
+            MakeCards();
         }
 
         public void Start()
@@ -83,7 +83,7 @@ namespace Kwartet.Desktop
             // set all cards that have the same category
             foreach (var category in (CardCategory[])Enum.GetValues(typeof(CardCategory)))
             {
-                var cardsInCategory = _cardsOnTable.Where(x => x.Category == category).ToArray();
+                var cardsInCategory = _cardsOnTable.Where(x => x.ServerCard.category == category).ToArray();
                 foreach(var card in cardsInCategory) card.SetSameCategorySet(cardsInCategory);
             }
         }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Xml.Serialization;
 using Kwartet.Desktop.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -11,17 +12,15 @@ namespace Kwartet.Desktop.Scenes
         
         public override void Initialize()
         {
-            
+            WebServer.Subscribe(ClientToServerStatus.StartGame, TryStartGame);
         }
 
-        public override void LoadContent()
+        public void TryStartGame(ServerStatusHandler.ClientMessage message)
         {
-            
-        }
+            if (Game._playersConnected.Count < 2) return;
 
-        public override void Update(GameTime gameTime)
-        {
-            
+            WebServer.Unsubscribe(ClientToServerStatus.StartGame, TryStartGame);
+            SwitchScene(typeof(CardGameScene));
         }
 
         public override void Draw(GameTime gameTime)
@@ -31,21 +30,14 @@ namespace Kwartet.Desktop.Scenes
             // draw the game code.
             string gamecode = $"Join the game with\n{WebServer.DisplayIPAdress}";
             var measuredString = Game1.font.MeasureString(gamecode) / 2;
-            var textPosition = new Vector2((float)Screen.Width / 2 - measuredString.X, (float)Screen.Height / 2 - measuredString.Y);
+            var textPosition = new Vector2((float)Screen.Width / 2, (float)Screen.Height / 2);
             
-            SpriteBatch.DrawString(Game1.font, gamecode, textPosition, Color.Black, 0, Vector2.Zero, Vector2.One,
+            SpriteBatch.DrawString(Game1.font, gamecode, textPosition, Color.Black, 0, measuredString, Vector2.One,
                 SpriteEffects.None, 0);
-
-            Debug.WriteLine("Hey bitch I am drawing here.");
-
-            // show the amount of players connected, with the names.
-
-
-        }
-
-        public MainMenu(SceneManager sceneManager) : base(sceneManager)
-        {
             
+            // show the amount of players connected, with the names.
+            SpriteBatch.DrawString(Game1.font, $"Players Connected:\n{Game._playersConnected.Count}/4\nMinimum players is 2", new Vector2(50), Color.White);
+
         }
     }
 }

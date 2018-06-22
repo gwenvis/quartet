@@ -1,9 +1,12 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Linq;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -20,6 +23,8 @@ namespace Kwartet.Desktop
         public string DisplayIPAdress;
         
         private WebSocketServer _webSocketServer;
+
+        private List<ConnectionInfo> connectedUsers = new List<ConnectionInfo>();
         private Dictionary<ClientToServerStatus, 
             Action<ServerStatusHandler.ClientMessage>> subscriptions;
 
@@ -41,6 +46,21 @@ namespace Kwartet.Desktop
 
             DisplayIPAdress = hostaddresses[0].ToString();
             Hosting = true;
+        }
+
+        public ConnectionInfo AddUser(string ID, Server server)
+        {
+            var c = new ConnectionInfo(ID, server);
+            connectedUsers.Add(c);
+            return c;
+        }
+
+        public void SendToAll(ServerStatusHandler.IServerMessage send)
+        {
+            foreach (var c in connectedUsers)
+            {
+                c.Server.Send(send);
+            }
         }
 
         private void Extract(MessageEventArgs args, Server server, string ID)
@@ -81,6 +101,15 @@ namespace Kwartet.Desktop
             }
         }
 
+        public void Unsubscribe(ClientToServerStatus status, Action<ServerStatusHandler.ClientMessage> subAction)
+        {
+            if (subscriptions == null) return;
+            
+            Action<ServerStatusHandler.ClientMessage> action;
+            if (subscriptions.TryGetValue(status, out action))
+                action -= subAction;
+        }
+
         public void StopServer()
         {
             if(!_webSocketServer.IsListening) throw new Exception("The server is not listening, so cannot stop. You nob.");
@@ -109,6 +138,11 @@ namespace Kwartet.Desktop
         public new void Send(FileInfo fileInfo)
         {
             base.Send(fileInfo);
+        }
+
+        public void Send(ServerStatusHandler.IServerMessage message)
+        {
+            this.Send(message.Build());
         }
 
         public new void Send(string data)

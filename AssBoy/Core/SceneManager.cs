@@ -32,9 +32,11 @@ namespace Kwartet.Desktop.Core
         {
             if (!type.IsSubclassOf(typeof(Scene))) return;
 
-            var scene = (Scene) Activator.CreateInstance(type, this);
-            
+            var scene = (Scene) Activator.CreateInstance(type);
+
+            CurrentScene?.UnloadContent();
             CurrentScene = (Scene)scene;
+            CurrentScene.SetSceneManager(this);
             CurrentScene?.Initialize();
             CurrentScene?.LoadContent();
         }

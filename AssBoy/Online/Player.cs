@@ -10,18 +10,17 @@ namespace Kwartet.Desktop
 {
     public class Player
     {
+        public readonly ConnectionInfo ConnectionInfo;
         public string Name { get; private set; }
-        private readonly string ID;
         public bool IsHost { get; }
         private List<Card> _cardsInHand = new List<Card>();
-        private Server _connectedServer;
+        
 
-        public Player(Server server, string name, string ID, bool isHost = false)
+        public Player(ConnectionInfo ci, string name, bool isHost = false)
         {
-            _connectedServer = server;
+            ConnectionInfo = ci;
             IsHost = isHost;
             Name = name;
-            this.ID = ID;
         }
         
         public void Update()
@@ -59,14 +58,7 @@ namespace Kwartet.Desktop
                 _cardsInHand.Add(card);
             }
             
-            // announce to the player all the new cards that were added.
-
-            string json = JsonBuilder.Create()
-                .WithParam("type", "newcard")
-                .WithParam("cards", enumerable)
-                .ToString();
-
-            byte[] bytes = Encoding.Unicode.GetBytes(json);
+            // TODO : announce to the player all the new cards that were added.
         }
 
         private bool CheckIfQuartet()
@@ -78,10 +70,5 @@ namespace Kwartet.Desktop
         {
             throw new NotImplementedException();            
         }
-    }
-
-    struct MyStruct
-    {
-        
     }
 }

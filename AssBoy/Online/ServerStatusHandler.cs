@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System.Collections.Generic;
+using Kwartet.Desktop.Cards;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 
@@ -15,11 +17,16 @@ namespace Kwartet.Desktop
             public JToken Data { get; set; }
             public string ID { get; set; }
         }
+
+        public interface IServerMessage
+        {
+            string Build();
+        }
         
         /// <summary>
         /// Message data that the server will send.
         /// </summary>
-        public struct ServerMessage<T> where T : struct
+        public struct ServerMessage<T> : IServerMessage where T : struct
         {
             [JsonProperty("status"),
             JsonConverter(typeof(StringEnumConverter))]
@@ -39,6 +46,9 @@ namespace Kwartet.Desktop
             }
         }
 
+        /// <summary>
+        /// Sent to a player that has joined, granting them an ID. 
+        /// </summary>
         public struct JoinInfo
         {
             [JsonProperty("id")]
@@ -47,6 +57,52 @@ namespace Kwartet.Desktop
             public JoinInfo(int id)
             {
                 this.id = id;
+            }
+        }
+
+        /// <summary>
+        /// Sent to a player that receives new cards.
+        /// </summary>
+        public struct CardsReceiveInfo
+        {
+            private ServerCard[] cards;
+            
+            public CardsReceiveInfo(ServerCard[] cardslist)
+            {
+                cards = cardslist;
+            }
+        }
+
+        /// <summary>
+        /// Sent to a player whose turn just started,
+        /// this contains the information with all players connected. (Even the player self)
+        /// this allows him to select a list of names
+        /// </summary>
+        public struct TurnStartedInfo
+        {
+            // information for the client
+            struct ClientPlayer
+            {
+                public string PlayerName;
+                public string ID;
+            }
+
+            private ClientPlayer[] players;
+
+            public TurnStartedInfo(Player[] players)
+            {
+                var clientPlayers = new List<ClientPlayer>();
+
+                foreach (var player in players)
+                {
+                    clientPlayers.Add(new ClientPlayer()
+                    {
+                        PlayerName = player.Name,
+                        ID = player.ConnectionInfo.ID
+                    });
+                }
+
+                this.players = clientPlayers.ToArray();
             }
         }
         
@@ -127,6 +183,16 @@ namespace Kwartet.Desktop
         /// Send this to the player when the connection has dropped.
         /// </summary>
         DropConnection,
+        
+        /// <summary>
+        /// Send this to a player to give them their ID
+        /// </summary>
+        JoinInfo,
+        
+        /// <summary>
+        /// Send this to all players when a game starts.
+        /// </summary>
+        StartGame,
         
         /// <summary>
         /// Unknown data.
