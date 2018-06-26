@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 using WebSocketSharp;
 using WebSocketSharp.Server;
 
-namespace Kwartet.Desktop
+namespace Kwartet.Desktop.Online
 {
     public class WebServer
     {   
@@ -50,17 +50,23 @@ namespace Kwartet.Desktop
 
         public ConnectionInfo AddUser(string ID, Server server)
         {
-            var c = new ConnectionInfo(ID, server);
+            var c = new ConnectionInfo(ID, server, this);
             connectedUsers.Add(c);
             return c;
         }
 
-        public void SendToAll(ServerStatusHandler.IServerMessage send)
+        public void SendToAll(IServerMessage send)
         {
             foreach (var c in connectedUsers)
             {
                 c.Server.Send(send);
             }
+        }
+
+        public void SendToPlayer(string ID, IServerMessage send)
+        {
+            var connectedUser = connectedUsers.FirstOrDefault(x => x.ID == ID);
+            connectedUser?.Server.Send(send);
         }
 
         private void Extract(MessageEventArgs args, Server server, string ID)
@@ -140,7 +146,7 @@ namespace Kwartet.Desktop
             base.Send(fileInfo);
         }
 
-        public void Send(ServerStatusHandler.IServerMessage message)
+        public void Send(IServerMessage message)
         {
             this.Send(message.Build());
         }

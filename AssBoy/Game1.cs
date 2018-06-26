@@ -1,11 +1,14 @@
 ﻿using System;
 using System.CodeDom;
 using System.Linq;
+using Kwartet.Desktop.Cards;
 using Kwartet.Desktop.Core;
+using Kwartet.Desktop.Online;
 using Kwartet.Desktop.Scenes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Game = Microsoft.Xna.Framework.Game;
 
 namespace Kwartet.Desktop
 {
@@ -18,7 +21,7 @@ namespace Kwartet.Desktop
         SpriteBatch spriteBatch;
         
         private WebServer server;
-        private Desktop.Game _game;
+        private Desktop.Online.Game _game;
         private SceneManager SceneManager { get; set; }
         
         public static SpriteFont font { get; private set; }
@@ -42,12 +45,12 @@ namespace Kwartet.Desktop
             server = new WebServer();
             renderTarget = new RenderTarget2D(GraphicsDevice, 1280, 720);
             Screen.InitScreen(renderTarget);
-            _game = new Game(server, Content);            
+            _game = new Desktop.Online.Game(server, Content);            
             _game.Start();
             
             server.Subscribe(ClientToServerStatus.Join, (a) =>
             {
-                if (_game._playersConnected.Count >= 4)
+                if (_game.PlayersConnected.Count >= 4)
                 {
                     DropConnection(a);
                     return;
@@ -56,10 +59,12 @@ namespace Kwartet.Desktop
                 ConnectionInfo info = server.AddUser(a.ID, a.ServerStatus);
                 int playerNum = _game.PlayerJoin(new Player(info, a.Data["name"].ToString()));
                 var joinInfo = new ServerStatusHandler.JoinInfo(playerNum);
-                string json = new 
-                    ServerStatusHandler.ServerMessage<ServerStatusHandler.JoinInfo>
-                    (ServerToClientStatuses.JoinInfo, joinInfo).Build();
-                a.ServerStatus.Send(json);
+                
+                var joinMessage = new 
+                    ServerMessage<ServerStatusHandler.JoinInfo>
+                    (ServerToClientStatuses.JoinInfo, joinInfo);
+
+                a.ServerStatus.Send(joinMessage);
             });
             
             base.Initialize();
@@ -68,8 +73,8 @@ namespace Kwartet.Desktop
         private void DropConnection(ServerStatusHandler.ClientMessage clientMessage)
         {
             clientMessage.ServerStatus.Send(
-                new ServerStatusHandler.ServerMessage
-                    <ServerStatusHandler.EmptyInfo>(ServerToClientStatuses.DropConnection, new ServerStatusHandler.EmptyInfo()).Build());
+                new ServerMessage
+                    <ServerStatusHandler.EmptyInfo>(ServerToClientStatuses.DropConnection, new ServerStatusHandler.EmptyInfo()));
             clientMessage.ServerStatus.DropConnection();
         }
 
@@ -127,7 +132,7 @@ namespace Kwartet.Desktop
             spriteBatch.Begin();
             string names = "";
             
-            _game._playersConnected.ForEach(x=>names += x.Name + "\n");
+            _game.PlayersConnected.ForEach(x=>names += x.Name + "\n");
 
             scene?.Draw(gameTime);
             

@@ -1,5 +1,6 @@
 ﻿using System;
 using Kwartet.Desktop.Core;
+using Kwartet.Desktop.Online;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -11,9 +12,11 @@ namespace Kwartet.Desktop.Cards
     /// </summary>
     public struct ServerCard
     {
+        [JsonProperty("cardname")]
         public string cardName;
-        [JsonConverter(typeof(StringEnumConverter))]
+        [JsonConverter(typeof(StringEnumConverter)), JsonProperty("category")]
         public CardCategory category;
+        [JsonProperty("cardsinsamecategory")]
         public string[] cardsInSameCategory;
     }
     
@@ -34,7 +37,7 @@ namespace Kwartet.Desktop.Cards
             string spritename = string.Join("-", name.ToLower().Split(' '));
             try
             {
-                cardImageTexture = Game.Content.Load<Texture2D>(spritename);
+                cardImageTexture = Online.Game.Content.Load<Texture2D>(spritename);
             }
             catch (Exception e)
             {

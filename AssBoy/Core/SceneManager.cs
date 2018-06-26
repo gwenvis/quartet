@@ -1,7 +1,9 @@
 ﻿using System;
+using Kwartet.Desktop.Online;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Game = Microsoft.Xna.Framework.Game;
 
 namespace Kwartet.Desktop.Core
 {
@@ -9,7 +11,7 @@ namespace Kwartet.Desktop.Core
     {
         public Scene CurrentScene { get; private set; }
         
-        internal Game Games { get; }
+        internal Online.Game Games { get; }
         internal ContentManager Content { get; }
         internal GraphicsDevice GraphicsDevice { get; }
         internal SpriteBatch SpriteBatch { get; }
@@ -18,7 +20,7 @@ namespace Kwartet.Desktop.Core
         public SceneManager(ContentManager content, 
             GraphicsDevice graphicsDevice, 
             SpriteBatch spriteBatch, 
-            Game game,
+            Desktop.Online.Game game,
             WebServer Server)
         {
             Content = content;

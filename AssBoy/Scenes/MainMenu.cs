@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Xml.Serialization;
 using Kwartet.Desktop.Core;
+using Kwartet.Desktop.Online;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -17,13 +18,21 @@ namespace Kwartet.Desktop.Scenes
 
         public void TryStartGame(ServerStatusHandler.ClientMessage message)
         {
-            if (Game._playersConnected.Count < 2) return;
+            if (Game.PlayersConnected.Count < 2) return;
 
             WebServer.Unsubscribe(ClientToServerStatus.StartGame, TryStartGame);
+            
+            // Announce that the game has started !
+            
+            WebServer.SendToAll(new ServerMessage<ServerStatusHandler.EmptyInfo>(ServerToClientStatuses.StartGame, 
+                new ServerStatusHandler.EmptyInfo()));
+            
+            
+            // Switch to the game scene ( epic )
             SwitchScene(typeof(CardGameScene));
         }
 
-        public override void Draw(GameTime gameTime)
+        public override void BeforeDraw(GameTime gameTime)
         {
             if (!WebServer.Hosting) return;
 
@@ -36,8 +45,7 @@ namespace Kwartet.Desktop.Scenes
                 SpriteEffects.None, 0);
             
             // show the amount of players connected, with the names.
-            SpriteBatch.DrawString(Game1.font, $"Players Connected:\n{Game._playersConnected.Count}/4\nMinimum players is 2", new Vector2(50), Color.White);
-
+            SpriteBatch.DrawString(Game1.font, $"Players Connected:\n{Game.PlayersConnected.Count}/4\nMinimum players is 2", new Vector2(50), Color.White);
         }
     }
 }

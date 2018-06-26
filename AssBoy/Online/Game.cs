@@ -4,9 +4,10 @@ using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Security.Cryptography;
 using Kwartet.Desktop.Cards;
+using Kwartet.Desktop.Online;
 using Microsoft.Xna.Framework.Content;
 
-namespace Kwartet.Desktop
+namespace Kwartet.Desktop.Online
 {
     public class Game
     {
@@ -14,7 +15,7 @@ namespace Kwartet.Desktop
         /// Players that are connected.
         /// The first player (index 0) is the host, and can decide when the player starts. (If there's more than 2 players.)
         /// </summary>
-        public List<Player> _playersConnected = new List<Player>();
+        public List<Player> PlayersConnected = new List<Player>();
         private List<Card> _cardsOnTable;
 
         private readonly Random random = new Random();
@@ -35,19 +36,21 @@ namespace Kwartet.Desktop
             _server.StartServer();
         }
 
-        private void HandOutCards()
+        public void HandOutCards()
         {
             const int cardsToGiveOut = 5; // Everyone gets this certain amount of cards.
             
-            foreach (var player in _playersConnected)
+            // randomize the list
+            _cardsOnTable = _cardsOnTable.OrderBy(item => random.Next()).ToList();
+            
+            foreach (var player in PlayersConnected)
             {
                 Card[] cards = new Card[cardsToGiveOut];
                 
                 for (int i = 0; i < cardsToGiveOut; i++)
                 {
-                    int randomCard = random.Next(0, _cardsOnTable.Count);
-                    cards[i] = _cardsOnTable[randomCard];
-                    _cardsOnTable.RemoveAt(randomCard);
+                    cards[i] = _cardsOnTable[0];
+                    _cardsOnTable.RemoveAt(0);
                 }
 
                 player.AddCards(cards);
@@ -56,8 +59,8 @@ namespace Kwartet.Desktop
 
         public int PlayerJoin(Player player)
         {
-            _playersConnected.Add(player);
-            return _playersConnected.Count;
+            PlayersConnected.Add(player);
+            return PlayersConnected.Count;
         }
         
         private void MakeCards()
@@ -77,7 +80,7 @@ namespace Kwartet.Desktop
                 new Card(CardCategory.Places, "Toronto"),
                 new Card(CardCategory.Places, "Rome"),
                 new Card(CardCategory.Places, "New York"),
-                new Card(CardCategory.Places, "Amsterdam")
+                new Card(CardCategory.Places, "Amsterdam"),
             };
 
             // set all cards that have the same category

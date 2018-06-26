@@ -4,8 +4,36 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 
-namespace Kwartet.Desktop
+namespace Kwartet.Desktop.Online
 {
+    /// <summary>
+    /// Message data that the server will send.
+    /// </summary>
+    public struct ServerMessage<T> : IServerMessage where T : struct
+    {
+        [JsonProperty("status"),
+         JsonConverter(typeof(StringEnumConverter))]
+        public ServerToClientStatuses status;
+        [JsonProperty("data")]
+        public T data;
+            
+        public ServerMessage(ServerToClientStatuses status, T data)
+        {
+            this.status = status;
+            this.data = data;
+        }
+
+        public string Build()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
+    }
+
+    public interface IServerMessage
+    {
+        string Build();
+    }
+    
     public class ServerStatusHandler
     {   
         /// <summary>
@@ -17,35 +45,7 @@ namespace Kwartet.Desktop
             public JToken Data { get; set; }
             public string ID { get; set; }
         }
-
-        public interface IServerMessage
-        {
-            string Build();
-        }
         
-        /// <summary>
-        /// Message data that the server will send.
-        /// </summary>
-        public struct ServerMessage<T> : IServerMessage where T : struct
-        {
-            [JsonProperty("status"),
-            JsonConverter(typeof(StringEnumConverter))]
-            public ServerToClientStatuses status;
-            [JsonProperty("data")]
-            public T data;
-            
-            public ServerMessage(ServerToClientStatuses status, T data)
-            {
-                this.status = status;
-                this.data = data;
-            }
-
-            public string Build()
-            {
-                return JsonConvert.SerializeObject(this);
-            }
-        }
-
         /// <summary>
         /// Sent to a player that has joined, granting them an ID. 
         /// </summary>
@@ -65,6 +65,7 @@ namespace Kwartet.Desktop
         /// </summary>
         public struct CardsReceiveInfo
         {
+            [JsonProperty("cards")]
             private ServerCard[] cards;
             
             public CardsReceiveInfo(ServerCard[] cardslist)
@@ -83,10 +84,13 @@ namespace Kwartet.Desktop
             // information for the client
             struct ClientPlayer
             {
+                [JsonProperty("playername")]
                 public string PlayerName;
+                [JsonProperty("id")]
                 public string ID;
-            }
+            }    
 
+            [JsonProperty("players")]
             private ClientPlayer[] players;
 
             public TurnStartedInfo(Player[] players)
