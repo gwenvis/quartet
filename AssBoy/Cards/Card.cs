@@ -43,6 +43,7 @@ namespace Kwartet.Desktop.Cards
             {
                 Console.WriteLine($"Card :: {spritename} could not be loaded.");
             }
+            
             if (cardTemplateTexture == null) cardTemplateTexture = Game.Content.Load<Texture2D>("card");
         }
 

@@ -17,13 +17,11 @@ namespace Kwartet.Desktop.Scenes
         {
             // Hand out all the cards to the players.
             Game.HandOutCards();
-            
-            // Notify all players of their cards
-            AnnounceCards();
+           
             
             // let a random player start
             currentPlayerIndex = random.Next(Game.PlayersConnected.Count);
-            AnnouncePlayerTurn();
+            AnnouncePlayerTurnStart(true);
             
             // subscribe to a question of a player ( asking for a card )
             WebServer.Subscribe(ClientToServerStatus.Question, OnQuestion);
@@ -33,6 +31,39 @@ namespace Kwartet.Desktop.Scenes
         {
             // TODO : Process the question
             var processedCard = ProcessQuestion(obj.Data);
+            var player = Game.GetPlayer(obj.ID);
+            
+            // get the hand of that player
+            var askedPlayer = Game.GetPlayer(processedCard.id);
+            if(askedPlayer == null) throw new Exception("Couldn't find the player.");
+
+            var card = askedPlayer.CardsInHand.FirstOrDefault(x =>
+                x.ServerCard.cardName.ToLower() == processedCard.name.ToLower() &&
+                x.ServerCard.category.ToString().ToLower() == processedCard.category.ToLower());
+
+            bool foundCard = card != null;
+
+            if (foundCard)
+            {
+                askedPlayer.RemoveCard(card);
+                player.AddCard(card);
+                AnnouncePlayerTurnStart(true); // Don't announce player turn
+            }
+            else
+            {
+                // if the card has NOT been found, just start the next turn I guess? OH! And give the player a card!
+
+                var poppedCard = Game.PopCard();
+                if (poppedCard != null) player.AddCard(poppedCard);
+                StartNextTurn();
+            }
+        }
+
+        private void StartNextTurn()
+        {
+            if (++currentPlayerIndex == Game.PlayersConnected.Count) currentPlayerIndex = 0;
+
+            AnnouncePlayerTurnStart();
         }
 
         
@@ -45,9 +76,9 @@ namespace Kwartet.Desktop.Scenes
             return (id, name, category);
         }
 
-        private void AnnouncePlayerTurn(bool firstTurn = false)
+        private void AnnouncePlayerTurnStart(bool skipTurnEnd = false)
         {
-            if (!firstTurn)
+            if (!skipTurnEnd)
                 AnnouncePlayerTurnEnd();
             
             string id = Game.PlayersConnected[currentPlayerIndex].ConnectionInfo.ID;

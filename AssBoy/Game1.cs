@@ -56,9 +56,10 @@ namespace Kwartet.Desktop
                     return;
                 }
 
+                Console.WriteLine(a.ID);
                 ConnectionInfo info = server.AddUser(a.ID, a.ServerStatus);
                 int playerNum = _game.PlayerJoin(new Player(info, a.Data["name"].ToString()));
-                var joinInfo = new ServerStatusHandler.JoinInfo(playerNum);
+                var joinInfo = new ServerStatusHandler.JoinInfo(playerNum, a.ID);
                 
                 var joinMessage = new 
                     ServerMessage<ServerStatusHandler.JoinInfo>

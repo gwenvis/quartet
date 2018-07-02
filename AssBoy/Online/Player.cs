@@ -30,17 +30,17 @@ namespace Kwartet.Desktop.Online
             
         }
 
-        public void AddCard(Card card)
+        public void AddCard(Card card, bool announce = true)
         {
             var cards = new Card[]
             {
                 card
             };
 
-            AddCards(cards);
+            AddCards(cards, announce);
         }
 
-        public void AddCards(IEnumerable<Card> cards)
+        public void AddCards(IEnumerable<Card> cards, bool announce = true)
         {
             var enumerable = cards as Card[] ?? cards.ToArray();
             foreach (var card in enumerable)
@@ -49,19 +49,23 @@ namespace Kwartet.Desktop.Online
             }
             
             // Before announcing, check if the new cards from a quartet.
-            ProcessQuartets();
-            
-            // TODO : announce to the player all the new cards that were added.
+            if (ProcessQuartets()) announce = false;
 
+            if (!announce) return;
+            
+            // announce to the player all the new cards that were added.
+            var cardList = new ServerStatusHandler.CardsReceiveInfo(enumerable.Select(x=>x.ServerCard).ToArray());
+            var message =
+                new ServerMessage<ServerStatusHandler.CardsReceiveInfo>(ServerToClientStatuses.GetCard, cardList);
+            ConnectionInfo.Server.Send(message);
         }
 
-        public void RemoveCard(Card card)
+        public void RemoveCard(Card card, bool announce = true)
         {
-            RemoveCards(new Card[] {card});
-            
+            RemoveCards(new Card[] {card}, announce);
         }
 
-        public void RemoveCards(IEnumerable<Card> cards)
+        public void RemoveCards(IEnumerable<Card> cards, bool announce = true)
         {
             var enumerable = cards as Card[] ?? cards.ToArray();
             foreach (var card in enumerable)
@@ -69,13 +73,24 @@ namespace Kwartet.Desktop.Online
                 int index = CardsInHand.FindIndex(x => x.ToString() == card.ToString());
                 CardsInHand.RemoveAt(index);
             }
+
+
+            if (!announce) return;
             
-            // TODO : announce the removal of these cards.
+            // Announce the removal of these cards
+            var cardList = new ServerStatusHandler.CardsReceiveInfo(enumerable.Select(x=>x.ServerCard).ToArray());
+            var message =
+                new ServerMessage<ServerStatusHandler.CardsReceiveInfo>(ServerToClientStatuses.GiveCard, cardList);
+            ConnectionInfo.Server.Send(message);
         }
 
-        private void ProcessQuartets()
+        private bool ProcessQuartets()
         {
+            if (CardsInHand.Count == 0 || CardsInHand == null) return;
+            
             // Iterate through all the categories and see if the player has a quartet.
+
+            bool hasQuartet = false;
             
             foreach (var category in (CardCategory[]) Enum.GetValues(typeof(CardCategory)))
             {
@@ -86,7 +101,10 @@ namespace Kwartet.Desktop.Online
                 RemoveCards(cards); // remove these cards.
 
                 Quartets++; // This guy has a new quartet! Awesome! 
+                hasQuartet = true;
             }
+
+            return hasQuartet;
         }
 
         private bool QuartetCategory(CardCategory category)

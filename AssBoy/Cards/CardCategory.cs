@@ -4,6 +4,8 @@
     {
         Teachers,
         Places,
-        Movies
+        Movies,
+        Students,
+        Gestures
     }
 }

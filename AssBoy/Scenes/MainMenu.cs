@@ -27,7 +27,6 @@ namespace Kwartet.Desktop.Scenes
             WebServer.SendToAll(new ServerMessage<ServerStatusHandler.EmptyInfo>(ServerToClientStatuses.StartGame, 
                 new ServerStatusHandler.EmptyInfo()));
             
-            
             // Switch to the game scene ( epic )
             SwitchScene(typeof(CardGameScene));
         }

@@ -51,12 +51,15 @@ namespace Kwartet.Desktop.Online
         /// </summary>
         public struct JoinInfo
         {
+            [JsonProperty("joinorder")]
+            private int joinOrder;
             [JsonProperty("id")]
-            private int id;
+            private string ID;
 
-            public JoinInfo(int id)
+            public JoinInfo(int joinOrder, string id)
             {
-                this.id = id;
+                this.joinOrder = joinOrder;
+                this.ID = id;
             }
         }
 
