@@ -1,0 +1,15 @@
+<svg id="card_" width="300" height="413" xmlns="http://www.w3.org/2000/svg">
+  <rect rx="16" id="svg_1" height="406.999493" width="294.999621" y="4.450243" x="2.500221" stroke-width="1.5" stroke="#000" fill="#fff"/>
+  <rect rx="12" id="svg_3"
+        height="24.999967" width="277.999635"
+        y="16.287972" x="11.000183" stroke-opacity="null" stroke-width="0" stroke="#000" fill="#729C62"/>
+  <image id="card_image" preserveAspectRatio="none" href="img/silvan.png" x="16.500198" y="60.450191" height="148.999805" width="267.999649"/>
+  <rect id="svg_4" height="148.999805" width="267.999649" y="60.450191" x="16.500198" stroke-opacity="null" stroke-width="1.5" stroke="#000" fill="none"/>
+  <rect rx="12" id="svg_5" height="179.999747" width="277.999635" y="221.287638" x="11.000183" stroke-opacity="null" stroke-width="0" stroke="#000" fill="#729C62"/>
+
+  <text id="card_category" fill="black" y="33" x="20">Card Category</text>
+
+  <text id="card_names" fill="black" y="275" x="20">
+    <tspan visibility="hidden" id="card_name_template" y="250" x="20" font-weight="bold">Card Name</tspan>
+  </text>
+</svg>

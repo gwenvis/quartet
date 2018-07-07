@@ -6,6 +6,8 @@
         Places,
         Movies,
         Students,
-        Gestures
+        Gestures,
+        Top10Moppen,
+        Memes,
     }
 }

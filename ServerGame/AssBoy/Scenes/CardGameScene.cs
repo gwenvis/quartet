@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Kwartet.Desktop.Cards;
 using Kwartet.Desktop.Core;
@@ -12,12 +13,30 @@ namespace Kwartet.Desktop.Scenes
     {
         private int currentPlayerIndex = 0;
         private Random random = new Random();
+        
+        public static readonly Dictionary<Player.Corner, Vector2> CornerPositions = new Dictionary<Player.Corner, Vector2>()
+        {
+            {Player.Corner.UpLeft, new Vector2(100,50)},
+            {Player.Corner.UpRight, new Vector2(Screen.Width - 100, 50)},
+            {Player.Corner.DownLeft, new Vector2(100, Screen.Height - 50)},
+            {Player.Corner.DownRight, new Vector2(Screen.Width - 200, Screen.Height - 300)},
+        };
 
         public override void Initialize()
         {
             // Hand out all the cards to the players.
             Game.HandOutCards();
            
+            // Give all players a corner
+            int corner = 0;
+
+            foreach (var player in Game.PlayersConnected)
+            {
+                player.SetCorner((Player.Corner)corner);
+                corner++;
+                
+                player.OrderCardPositions();
+            }
             
             // let a random player start
             currentPlayerIndex = random.Next(Game.PlayersConnected.Count);
@@ -47,6 +66,12 @@ namespace Kwartet.Desktop.Scenes
             {
                 askedPlayer.RemoveCard(card);
                 player.AddCard(card);
+                
+                /// TODO : Start the card animation where it show up on the screen first.
+
+                card.ShowOnCenter(player);
+                
+                
                 AnnouncePlayerTurnStart(true); // Don't announce player turn
             }
             else
@@ -111,7 +136,25 @@ namespace Kwartet.Desktop.Scenes
 
         public override void Update(GameTime dt)
         {
-            
+            foreach (var player in Game.PlayersConnected)
+            {
+                foreach (var card in player.CardsInHand)
+                {
+                    card.Update((float)dt.ElapsedGameTime.TotalSeconds);
+                }
+            }
+        }
+
+        public override void AfterDraw(GameTime dt)
+        {
+            // draw all player names in their respective corners
+            foreach (var player in Game.PlayersConnected)
+            {
+                foreach (var card in player.CardsInHand)
+                {
+                    card.Draw(SpriteBatch);
+                }
+            }
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.CodeDom;
 using System.Linq;
+using System.Net.Mime;
+using System.Threading.Tasks;
 using Kwartet.Desktop.Cards;
 using Kwartet.Desktop.Core;
 using Kwartet.Desktop.Online;
@@ -79,6 +81,9 @@ namespace Kwartet.Desktop
             clientMessage.ServerStatus.DropConnection();
         }
 
+        private Texture2D c;
+        private Vector2 card = new Vector2(0);
+
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
         /// all of your content.
@@ -88,6 +93,7 @@ namespace Kwartet.Desktop
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             font = Content.Load<SpriteFont>("spritefont");
+            c = Content.Load<Texture2D>("card");
             // TODO: use this.Content to load your game content here
             
             SceneManager = new SceneManager(Content, GraphicsDevice, spriteBatch, _game, server);
@@ -103,6 +109,8 @@ namespace Kwartet.Desktop
             // TODO: Unload any non ContentManager content here
         }
 
+        private bool can = true;
+        
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -113,6 +121,20 @@ namespace Kwartet.Desktop
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            var state = Keyboard.GetState();
+
+            if (state.IsKeyDown(Keys.F) && can)
+            {
+                graphics.IsFullScreen = !graphics.IsFullScreen;
+                graphics.ApplyChanges();
+                
+                can = false;
+                Task.Factory.StartNew(() => { Task.Delay(TimeSpan.FromSeconds(2)).Wait();
+                    can = true;
+                });
+            }
+            
+            
             Scene scene = SceneManager.CurrentScene;
 
             scene?.Update(gameTime);
@@ -120,6 +142,8 @@ namespace Kwartet.Desktop
             base.Update(gameTime);
         }
 
+        
+        
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -136,6 +160,7 @@ namespace Kwartet.Desktop
             _game.PlayersConnected.ForEach(x=>names += x.Name + "\n");
 
             scene?.Draw(gameTime);
+            
             
             spriteBatch.End();
             

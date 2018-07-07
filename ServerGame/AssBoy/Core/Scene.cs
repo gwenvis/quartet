@@ -42,10 +42,7 @@ namespace Kwartet.Desktop.Core
         public void Draw(GameTime dt)
         {
             BeforeDraw(dt);
-            for (int i = 0; i < EntitiesInScene.Count; i++)
-            {
-                EntitiesInScene[i].Draw(SpriteBatch);
-            }
+            // TODO : Draw entities in scene
             AfterDraw(dt);
         }
         

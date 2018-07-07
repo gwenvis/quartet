@@ -4,7 +4,9 @@ using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Security.Cryptography;
 using Kwartet.Desktop.Cards;
+using Kwartet.Desktop.Core;
 using Kwartet.Desktop.Online;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 
 namespace Kwartet.Desktop.Online
@@ -64,7 +66,17 @@ namespace Kwartet.Desktop.Online
             _cardsOnTable.RemoveAt(0);
             return card;
         }
-        
+
+        public void SortCardsOnTable()
+        {
+            Vector2 center = new Vector2(Screen.Width / 2, Screen.Height / 2);
+            float xOffset = 2.0f;
+
+            for (int i = 0; i < _cardsOnTable.Count; i++)
+            {
+                _cardsOnTable[i].SetWantedPosition(center + new Vector2(xOffset * i, 0));
+            }
+        }
 
         public Player GetPlayer(string ID)
         {
@@ -105,6 +117,16 @@ namespace Kwartet.Desktop.Online
                 new Card(CardCategory.Gestures, "Fuck you"),
                 new Card(CardCategory.Gestures, "Italiano"),
                 new Card(CardCategory.Gestures, "Good"),
+                
+                new Card(CardCategory.Top10Moppen, "Klop klop"),
+                new Card(CardCategory.Top10Moppen, "Dokter"),
+                new Card(CardCategory.Top10Moppen, "Ook Floyd"),
+                new Card(CardCategory.Top10Moppen, "Belgen"),
+                
+                new Card(CardCategory.Memes, "Pickle Rick"),
+                new Card(CardCategory.Memes, "Do you know the wae"),
+                new Card(CardCategory.Memes, "Pepe"),
+                new Card(CardCategory.Memes, "Pickle Rick"),
             };
 
             // set all cards that have the same category

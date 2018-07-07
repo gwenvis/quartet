@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Kwartet.Desktop.Cards;
+using Kwartet.Desktop.Scenes;
+using Microsoft.Xna.Framework;
 
 namespace Kwartet.Desktop.Online
 {
@@ -14,6 +16,8 @@ namespace Kwartet.Desktop.Online
         public string Name { get; private set; }
         public bool IsHost { get; }
         public readonly List<Card> CardsInHand = new List<Card>();
+        public Corner PlayerCorner { get; private set; }
+        
         
         public int Quartets { get; private set; }
         
@@ -24,10 +28,10 @@ namespace Kwartet.Desktop.Online
             IsHost = isHost;
             Name = name;
         }
-        
-        public void Update()
+
+        public void SetCorner(Corner corner)
         {
-            
+            PlayerCorner = corner;
         }
 
         public void AddCard(Card card, bool announce = true)
@@ -50,6 +54,8 @@ namespace Kwartet.Desktop.Online
             
             // Before announcing, check if the new cards from a quartet.
             if (ProcessQuartets()) announce = false;
+            
+            OrderCardPositions();
 
             if (!announce) return;
             
@@ -58,6 +64,19 @@ namespace Kwartet.Desktop.Online
             var message =
                 new ServerMessage<ServerStatusHandler.CardsReceiveInfo>(ServerToClientStatuses.GetCard, cardList);
             ConnectionInfo.Server.Send(message);
+        }
+
+        public void OrderCardPositions()
+        {
+            const float cardXInterval = 2.0f; // epic
+            const float cardYInterval = 0.2f; // eic
+            Vector2 startPos = CardGameScene.CornerPositions[PlayerCorner];
+            
+            for (int i = 0; i < CardsInHand.Count; i++)
+            {
+                var card = CardsInHand[i];
+                card.SetWantedPosition(startPos + new Vector2(cardXInterval * i, cardYInterval * i));
+            }
         }
 
         public void RemoveCard(Card card, bool announce = true)
@@ -74,7 +93,8 @@ namespace Kwartet.Desktop.Online
                 CardsInHand.RemoveAt(index);
             }
 
-
+            OrderCardPositions();
+            
             if (!announce) return;
             
             // Announce the removal of these cards
@@ -82,11 +102,13 @@ namespace Kwartet.Desktop.Online
             var message =
                 new ServerMessage<ServerStatusHandler.CardsReceiveInfo>(ServerToClientStatuses.GiveCard, cardList);
             ConnectionInfo.Server.Send(message);
+            
+            
         }
 
         private bool ProcessQuartets()
         {
-            if (CardsInHand.Count == 0 || CardsInHand == null) return;
+            if (CardsInHand.Count == 0 || CardsInHand == null) return false;
             
             // Iterate through all the categories and see if the player has a quartet.
 
@@ -110,6 +132,14 @@ namespace Kwartet.Desktop.Online
         private bool QuartetCategory(CardCategory category)
         {
             return CardsInHand.Count(x => x.ServerCard.category == category) == 4;
+        }
+
+        public enum Corner
+        {
+            UpLeft = 0,
+            DownRight,
+            UpRight,
+            DownLeft,
         }
     }
 }
