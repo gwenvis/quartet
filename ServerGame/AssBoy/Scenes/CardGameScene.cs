@@ -40,7 +40,7 @@ namespace Kwartet.Desktop.Scenes
             
             // let a random player start
             currentPlayerIndex = random.Next(Game.PlayersConnected.Count);
-            AnnouncePlayerTurnStart(true);
+            AnnouncePlayerTurnStart();
             
             // subscribe to a question of a player ( asking for a card )
             WebServer.Subscribe(ClientToServerStatus.Question, OnQuestion);
@@ -67,12 +67,9 @@ namespace Kwartet.Desktop.Scenes
                 askedPlayer.RemoveCard(card);
                 player.AddCard(card);
                 
-                /// TODO : Start the card animation where it show up on the screen first.
-
                 card.ShowOnCenter(player);
                 
-                
-                AnnouncePlayerTurnStart(true); // Don't announce player turn
+                AnnouncePlayerTurnStart();
             }
             else
             {
@@ -86,6 +83,8 @@ namespace Kwartet.Desktop.Scenes
 
         private void StartNextTurn()
         {
+            AnnouncePlayerTurnEnd();
+            
             if (++currentPlayerIndex == Game.PlayersConnected.Count) currentPlayerIndex = 0;
 
             AnnouncePlayerTurnStart();
@@ -101,11 +100,8 @@ namespace Kwartet.Desktop.Scenes
             return (id, name, category);
         }
 
-        private void AnnouncePlayerTurnStart(bool skipTurnEnd = false)
+        private void AnnouncePlayerTurnStart()
         {
-            if (!skipTurnEnd)
-                AnnouncePlayerTurnEnd();
-            
             string id = Game.PlayersConnected[currentPlayerIndex].ConnectionInfo.ID;
             var info = new ServerMessage<ServerStatusHandler.TurnStartedInfo>(ServerToClientStatuses.TurnStarted,
                 new ServerStatusHandler.TurnStartedInfo(Game.PlayersConnected.ToArray()));
@@ -115,8 +111,6 @@ namespace Kwartet.Desktop.Scenes
 
         private void AnnouncePlayerTurnEnd()
         {
-            // TODO : Announce END turn
-            
             string id = Game.PlayersConnected[currentPlayerIndex].ConnectionInfo.ID;
             
             WebServer.SendToPlayer(id, new ServerMessage<ServerStatusHandler.EmptyInfo>

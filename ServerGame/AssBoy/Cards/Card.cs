@@ -57,7 +57,7 @@ namespace Kwartet.Desktop.Cards
             // default card to hidden
             Hidden = true;
 
-            Size = new Vector2(0.2f);
+            Size = new Vector2(0.12f);
             SetWantedSize(Size);
 
             if (cardHiddenTexture == null) cardHiddenTexture = Game.Content.Load<Texture2D>("card-back");
@@ -103,13 +103,13 @@ namespace Kwartet.Desktop.Cards
             sb.Draw(cardTemplateTexture, Position, null, Color.White, Rotation, Vector2.Zero, Size, SpriteEffects.None,
                 LayerDepth);
             
-            // Draw Title
-            sb.DrawString(Game1.font, ServerCard.cardName, Position + new Vector2(74*Size.X,80*Size.Y), Color.Black, Rotation, Vector2.Zero, Size*4, SpriteEffects.None, LayerDepth);
+            // Draw Title (Category)
+            sb.DrawString(Game1.font, ServerCard.category.ToString(), Position + new Vector2(74*Size.X,80*Size.Y), Color.Black, Rotation, Vector2.Zero, Size*4, SpriteEffects.None, LayerDepth);
             
             // Draw Image of the card
             if(cardImageTexture != null)
                 sb.Draw(cardImageTexture, Position + new Vector2(74 * Size.X, 205 * Size.Y), null, Color.White, Rotation,
-                    Vector2.Zero, Size*0.5f, SpriteEffects.None, LayerDepth);
+                    Vector2.Zero, Size, SpriteEffects.None, LayerDepth);
 
             // Draw the other categories
             float positionInterval = 100.0f;
@@ -124,7 +124,7 @@ namespace Kwartet.Desktop.Cards
             }
 
             // Draw the current category again but with a different epic color
-            sb.DrawString(Game1.font, ServerCard.cardName, Position + new Vector2(74 * Size.X, (startYPos + positionInterval * thisIndex)*Size.Y), Color.DarkRed, Rotation, Vector2.Zero, Size*4, SpriteEffects.None, LayerDepth);
+            sb.DrawString(Game1.font, ServerCard.cardName, Position + new Vector2(74 * Size.X, (startYPos + positionInterval * thisIndex)*Size.Y), Color.Red, Rotation, Vector2.Zero, Size*4, SpriteEffects.None, LayerDepth+1);
         }
 
         public void ShowOnCenter(Player ownedPlayer)
