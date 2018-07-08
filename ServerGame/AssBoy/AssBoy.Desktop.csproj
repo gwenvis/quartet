@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props')" />
-  <PropertyGroup> 
+  <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
@@ -10,7 +10,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AssBoy</RootNamespace>
-    <AssemblyName>AssBoy</AssemblyName>
+    <AssemblyName>Kikker</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MonoGamePlatform>DesktopGL</MonoGamePlatform>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
@@ -128,97 +128,96 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="dataimg\amsterdam.png" >
+    <Content Include="dataimg\amsterdam.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\belgen.png" >
+    <Content Include="dataimg\belgen.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\das-volgens-mij-een-kroket.png" >
+    <Content Include="dataimg\das-volgens-mij-een-kroket.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\deadpool-2.png" >
+    <Content Include="dataimg\deadpool-2.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\do-you-know-the-wae.png" >
+    <Content Include="dataimg\do-you-know-the-wae.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\dokter.png" >
+    <Content Include="dataimg\dokter.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\ed.png" >
+    <Content Include="dataimg\ed.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\emoji-movie.png" >
+    <Content Include="dataimg\emoji-movie.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\floyd.png" >
+    <Content Include="dataimg\floyd.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\frozen.png" >
+    <Content Include="dataimg\frozen.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\fuck-you.png" >
+    <Content Include="dataimg\fuck-you.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\gijs.png" >
+    <Content Include="dataimg\gijs.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\good.png" >
+    <Content Include="dataimg\good.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\italiano.png" >
+    <Content Include="dataimg\italiano.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\jelle.png" >
+    <Content Include="dataimg\jelle.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\jerry.png" >
+    <Content Include="dataimg\jerry.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\klop-klop.png" >
+    <Content Include="dataimg\klop-klop.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\lekker-hamburgertje.png" >
+    <Content Include="dataimg\lekker-hamburgertje.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\muffin.png" >
+    <Content Include="dataimg\muffin.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\new-york.png" >
+    <Content Include="dataimg\new-york.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\ook-floyd.png" >
+    <Content Include="dataimg\ook-floyd.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\pepe.png" >
+    <Content Include="dataimg\pepe.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\pickle-rick.png" >
+    <Content Include="dataimg\pickle-rick.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\richard.png" >
+    <Content Include="dataimg\richard.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\rome.png" >
+    <Content Include="dataimg\rome.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\sherlock-gnomes.png" >
+    <Content Include="dataimg\sherlock-gnomes.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\silvan.png" >
+    <Content Include="dataimg\silvan.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\spongebob.png" >
+    <Content Include="dataimg\spongebob.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="dataimg\timo.png" >
+    <Content Include="dataimg\timo.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="dataimg\toronto.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-
     <Content Include="dataimg\very-nice.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
