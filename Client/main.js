@@ -10,13 +10,17 @@ let screens = {
 }
 
 let gameScreens = {
-    startGameButton : document.querySelector("#startgamebutton"),
-    questionform : document.querySelector("#questionform"),
-    waitingturn : document.querySelector("#waitingturn"),
-    cardholder : document.querySelector("#cardholder")
+    startGameButton : document.getElementById("startgamebutton"),
+    questionform : document.getElementById("questionform").querySelector(".card-content"),
+    waitingturn : document.getElementById("waitingturn"),
+    cardholder : document.getElementById("cardholder")
 }
 
 let cardsInGame = [];
+
+window.onbeforeunload = function () {
+    return 1;
+};
 
 function join()
 {
@@ -73,7 +77,11 @@ function receiveData(jsondata)
 
             if(jsondata.data.joinorder === 1)
             {
-                document.querySelector("#startgamebutton").hidden = false;
+                unHideNode(gameScreens.startGameButton);
+                hideNode(document.getElementById("waitingstart"));
+            }
+            else {
+                unHideNode(document.getElementById("waitingstart"));
             }
             
             myId = jsondata.data.id;
@@ -85,11 +93,11 @@ function receiveData(jsondata)
 
         case "turnstarted":
 
-            gameScreens.questionform.hidden = false;
-            gameScreens.questionform.innerHTML = "";
-            gameScreens.waitingturn.hidden = true;
+            unHideNode(document.getElementById("questionform"))
+            hideNode(gameScreens.waitingturn);
 
-            console.log(jsondata);
+            gameScreens.questionform.innerHTML = '<span class="card-title">Select someone...</span>';
+
 
             for(let i = 0; i < jsondata.data.players.length; i++) {
 
@@ -98,15 +106,15 @@ function receiveData(jsondata)
                 console.log("My id: " + myId.toString() + " Player id: " + player.id.toString());
                 if(player.id === myId) continue;
 
-                let button = document.createElement("button");
+                let button = document.createElement("a");
                 button.innerHTML = player.playername;
                 button.setAttribute("playerId", player.id);
-
+                button.classList.add("waves-effect", "waves-light", "btn");
                 button.onclick = function() {
-                    gameScreens.questionform.hidden = true;
-                    gameScreens.cardholder.style.bottom = "0";
+                    hideNode(document.getElementById("questionform"));
+                    gameScreens.cardholder.classList.remove("no");
                     selectedID = button.getAttribute("playerId");
-                }
+                };
 
                 gameScreens.questionform.appendChild(button);
 
@@ -117,19 +125,19 @@ function receiveData(jsondata)
 
         case "turnended":
 
-            gameScreens.questionform.hidden = false;
-            gameScreens.waitingturn.hidden = true;
-            gameScreens.cardholder.style.bottom = "-100px";
-            document.querySelector("#startgamebutton").hidden = true;
+            unHideNode(gameScreens.questionform);
+            hideNode(gameScreens.waitingturn);
+
+            gameScreens.cardholder.classList.add("no");
 
             break;
 
-        case "gamestarted":
-            document.querySelector("#startgamebutton").style.display= "none";
-            document.body.removeChild(document.querySelector("#startgamebutton"));
+        case "startgame":
+            hideNode(gameScreens.startGameButton);
+            hideNode(document.getElementById("waitingstart"));
+            unHideNode(gameScreens.waitingturn);
+            gameScreens.cardholder.classList.add("no");
 
-            gameScreens.waitingturn.hidden = false;
-            gameScreens.cardholder.style.bottom = "-100px";
             break;
 
         case "getcard":
@@ -140,6 +148,10 @@ function receiveData(jsondata)
                 let card = new Card(c.category, c.cardname, c.cardsinsamecategory);
                 addCard(card);
             }
+
+            window.setTimeout(() =>
+                gameScreens.cardholder.scrollTop = gameScreens.cardholder.scrollHeight,
+                1000);
 
             console.log(cardsInGame);
 
@@ -187,6 +199,12 @@ function addCard(card) {
     copy.setAttribute("id", "card")
     copy.setAttribute("class", cardId);
 
+    copy.querySelectorAll("rect")[0].setAttribute("fill", "#fffd00");
+
+    window.setTimeout(() => {
+        copy.querySelectorAll("rect")[0].setAttribute("fill", "#fff");
+    }, 4000);
+
     copy.style.display = "inline-block";
     let image = copy.querySelector("#card_image");
     image.setAttribute("href", "img/" + card.filename);
@@ -224,6 +242,8 @@ function addCard(card) {
                 })
             )
 
+            gameScreens.cardholder.classList.add("no");
+
             myTurn = false;
         };
 
@@ -256,6 +276,14 @@ function removeCard(cardGameObject) {
         let cc = el.cardObject;
         return !(c.name === cc.name && c.category === cc.category);
     });
+}
+
+function hideNode(x) {
+    x.classList.add("hidden");
+}
+
+function unHideNode(x) {
+    x.classList.remove("hidden");
 }
 
 function leave()

@@ -1,6 +1,6 @@
 html, body {
     height: 100%;
-    witdh: 100%;
+    width: 100%;
     margin: 0;
     padding: 0;
     overflow: hidden;
@@ -24,24 +24,38 @@ html, body {
 #cardtemplate, #card {
     position:relative;
     z-index:10;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.6);
 }
 
 #cardholder {
     position:absolute;
-    overflow:auto;
-    overflow-y:hidden;
-    width:100%;
-    white-space:nowrap;
+    overflow-y:scroll;
+    width:300px;
+    margin:0 auto;
     left:0;
-    bottom:-150px;
-    height:413px;
+    right:0;
+    bottom:0;
+    height:100%;
     z-index:0;
+
+    transition: height 1s;
+}
+
+#cardholder.no {
+    height:25%;
+
+    transition: height 1s;
 }
 
 #startgamebutton {
     z-index:99;
+    padding:100px;
 }
 
 #questionform {
     z-index:100;
+}
+
+.hidden {
+    display: none;
 }

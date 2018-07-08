@@ -1,26 +1,70 @@
-<title>cumming</title>
+<title>Kikker</title>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="style.css">
 
 <div class="connection_screen">
+    <div class="center-align">
+        <div class="row">
+            <div class="col s12 m6">
+                <div class="card blue-grey darken-1 left-align">
+                    <div class="card-content white-text">
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="IP" type="text" class="validate">
+                                <label for="IP">Game Code</label>
+                            </div>
+                        </div>
 
-    <label for="IP">IP Address </label> <textarea id="IP" rows="1" placeholder="IP Address + port"></textarea><br>
-    <label for="name">Name </label> <textarea rows="1" id="name"></textarea><br>
-    <button id="button" onclick="join()" value="Join">Join</button>
-    <script src="card.class.js"></script>
+                        <div class="row">
 
+                            <div class="input-field col s12">
+                                <input id="name" type="text" data-length="16">
+                                <label for="name">Name</label>
+                            </div>
+                        </div>
+
+                        <!-- <label for="IP">IP Address </label> <textarea id="IP" rows="1" placeholder="IP Address + port"></textarea><br> -->
+                        <!--<label for="name">Name </label> <textarea rows="1" id="name"></textarea><br>-->
+                        <a class="waves-effect waves-light btn" id="button" onclick="join()" value="Join">Join</a>
+                        <script src="card.class.js"></script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div hidden class="game_screen">
 
-    <button hidden id="startgamebutton" onclick="startGame()">Start Game</button>
-
-    <div hidden id="questionform">
-
+    <div id="startgamebutton" class="center-align hidden">
+        <a class="waves-effect waves-light btn green lighten-2" onclick="startGame()">Start Game</a>
     </div>
 
-    <div hidden id="waitingturn">
-        You are waiting your turn..
+    <div id="waitingstart" class="valign-wrapper hidden">
+        <h1 style="color:white" class="center-align">
+            You are waiting for the game to start.
+        </h1>
+    </div>
+
+    <div id="questionform" class="hidden">
+        <div class="row">
+            <div class="col s12 m6">
+                <div class="card blue-grey darken-1">
+                    <div class="card-content white-text">
+                        <span class="card-title">Select someone...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="hidden" id="waitingturn">
+        <h1 style="color:white" class="center-align">
+            You are waiting for your turn...
+        </h1>
     </div>
 
     <div id="cardholder">
@@ -30,13 +74,17 @@
 </div>
 
 <svg style="display:none" id="cardtemplate" width="300" height="413" xmlns="http://www.w3.org/2000/svg">
-    <rect rx="16" id="svg_1" height="406.999493" width="294.999621" y="4.450243" x="2.500221" stroke-width="1.5" stroke="#000" fill="#fff"></rect>
+    <rect rx="16" id="svg_1" height="406.999493" width="294.999621" y="4.450243" x="2.500221" stroke-width="1.5"
+          stroke="#000" fill="#fff"></rect>
     <rect rx="12" id="svg_3"
           height="24.999967" width="277.999635"
           y="16.287972" x="11.000183" stroke-opacity="null" stroke-width="0" stroke="#000" fill="#729C62"></rect>
-    <image id="card_image" preserveAspectRatio="none" href="img/silvan.png" x="16.500198" y="60.450191" height="148.999805" width="267.999649"></image>
-    <rect id="svg_4" height="148.999805" width="267.999649" y="60.450191" x="16.500198" stroke-opacity="null" stroke-width="1.5" stroke="#000" fill="none"></rect>
-    <rect rx="12" id="svg_5" height="179.999747" width="277.999635" y="221.287638" x="11.000183" stroke-opacity="null" stroke-width="0" stroke="#000" fill="#729C62"></rect>
+    <image id="card_image" preserveAspectRatio="none" href="img/silvan.png" x="16.500198" y="60.450191"
+           height="148.999805" width="267.999649"></image>
+    <rect id="svg_4" height="148.999805" width="267.999649" y="60.450191" x="16.500198" stroke-opacity="null"
+          stroke-width="1.5" stroke="#000" fill="none"></rect>
+    <rect rx="12" id="svg_5" height="179.999747" width="277.999635" y="221.287638" x="11.000183" stroke-opacity="null"
+          stroke-width="0" stroke="#000" fill="#729C62"></rect>
 
     <text id="card_category" fill="black" y="33" x="20">Card Category</text>
 
