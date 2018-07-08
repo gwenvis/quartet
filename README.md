@@ -1,24 +1,21 @@
 # Input/Output
+
+![poster](https://github.com/LtKst/gamelab/blob/master/poster.png)
+
 Contributors:
 
+  - **Antonio Bottelier**
   - Koen Sparrenboom
-  - Antonio Bottelier
-  - Dave van Staden
 
-# Game Concept:
+# Ontwerp:
 
-   [Presentation](https://docs.google.com/presentation/d/1aiOqxanbgnC7Jiv5hfRYV8YSR2mZAFUWqbYjQsOXilQ/edit?usp=sharing)
+Ooit van dat spelletje kwartet gehoord? Dat. Via mobiel, en computer. Denk aan Jackbox, maar dan kwartet. En je moet verbonden zijn met hetzelfde netwerk.
 
-  - Kwartetten via de het Internet met andere mensen.
-  - Online multiplayer
-  - yep
+# Portfolio:
 
-
-Software/talen gebruikt:
-  - C#
-  - Visual Studio / Rider
-  - MonoGame
-  - HTML5
-
+  - [Onderzoek](#)
+  - [Ontwerp](#)
+  - [Testrapportage](#)
+  - [Presentatie](https://docs.google.com/presentation/d/1jU-m4JodX7zlJp4S6nIKw9V4PHwR9yWsYWbXvnqjf7c/edit?usp=sharing)
 
 # this is epic

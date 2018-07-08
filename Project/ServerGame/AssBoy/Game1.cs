@@ -47,6 +47,9 @@ namespace Kwartet.Desktop
             server = new WebServer();
             renderTarget = new RenderTarget2D(GraphicsDevice, 1280, 720);
             Screen.InitScreen(renderTarget);
+            this.graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 720;
+            graphics.ApplyChanges();
             _game = new Desktop.Online.Game(server, Content, GraphicsDevice);            
             _game.Start();
             
