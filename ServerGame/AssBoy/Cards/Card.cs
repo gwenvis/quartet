@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Kwartet.Desktop.Core;
@@ -32,9 +33,12 @@ namespace Kwartet.Desktop.Cards
         private Texture2D cardImageTexture;
         public bool Hidden { get; set; }
 
+        public float Width => cardTemplateTexture.Width * Size.X;
+        public float Height => cardTemplateTexture.Height * Size.Y;
+
         private Vector2 wantedPosition;
         private Vector2 wantedSize;
-        private float lerpSpeed = 18.0f;
+        private float lerpSpeed = 5.0f;
 
         public Card(CardCategory category, string name)
         {
@@ -47,7 +51,12 @@ namespace Kwartet.Desktop.Cards
             string spritename = string.Join("-", name.ToLower().Split(' '));
             try
             {
-                cardImageTexture = Online.Game.Content.Load<Texture2D>(spritename);
+                var stream = System.IO.File.OpenRead("dataimg/" + spritename + ".png");
+
+                cardImageTexture = Texture2D.FromStream(Game.GraphicsDevice, stream);
+
+                //cardImageTexture = Online.Game.Content.Load<Texture2D>(spritename);
+
             }
             catch (Exception e)
             {
@@ -59,6 +68,8 @@ namespace Kwartet.Desktop.Cards
 
             Size = new Vector2(0.12f);
             SetWantedSize(Size);
+
+            LayerDepth = 1;
 
             if (cardHiddenTexture == null) cardHiddenTexture = Game.Content.Load<Texture2D>("card-back");
             if (cardTemplateTexture == null) cardTemplateTexture = Game.Content.Load<Texture2D>("card");
@@ -109,7 +120,7 @@ namespace Kwartet.Desktop.Cards
             // Draw Image of the card
             if(cardImageTexture != null)
                 sb.Draw(cardImageTexture, Position + new Vector2(74 * Size.X, 205 * Size.Y), null, Color.White, Rotation,
-                    Vector2.Zero, Size, SpriteEffects.None, LayerDepth);
+                    Vector2.Zero, Size*2, SpriteEffects.None, LayerDepth);
 
             // Draw the other categories
             float positionInterval = 100.0f;
@@ -124,21 +135,24 @@ namespace Kwartet.Desktop.Cards
             }
 
             // Draw the current category again but with a different epic color
-            sb.DrawString(Game1.font, ServerCard.cardName, Position + new Vector2(74 * Size.X, (startYPos + positionInterval * thisIndex)*Size.Y), Color.Red, Rotation, Vector2.Zero, Size*4, SpriteEffects.None, LayerDepth+1);
+            sb.DrawString(Game1.font, ServerCard.cardName, Position + new Vector2(74 * Size.X, (startYPos + positionInterval * thisIndex)*Size.Y), Color.Red, Rotation, Vector2.Zero, Size*4, SpriteEffects.None, LayerDepth);
         }
 
         public void ShowOnCenter(Player ownedPlayer)
         {
-            
             Task.Factory.StartNew(() =>
             {
                 Task.Delay(TimeSpan.FromSeconds(0.1)).Wait();
+
+                if (k) return;
                 
                 // Set wanted position to center of screen
                 Vector2 center = new Vector2(Screen.Width/2, Screen.Height/2);
-                center.X -= (cardTemplateTexture.Width * Size.X) / 2;
-                center.Y -= cardTemplateTexture.Height * Size.Y / 2;
+                center.X -= cardTemplateTexture.Width * 0.4f /2;
+                center.Y -= cardTemplateTexture.Height * 0.4f /2;
 
+                int l = LayerDepth;
+                LayerDepth = 0;
                 Vector2 size = Size;
                 SetWantedSize(new Vector2(0.4f));
                 
@@ -146,26 +160,61 @@ namespace Kwartet.Desktop.Cards
                 
                 // Show the card.
                 Hidden = false;
-
-                Console.WriteLine("Hey");
                 
-                // Wait a second.
+                // Wait a second, or two.
                 Task.Delay(TimeSpan.FromSeconds(2)).Wait();
 
-                Console.WriteLine("Hey");
-                // Move the card back.
+                // Move the card back, and don't show it anymore.
 
                 SetWantedSize(size);
+                LayerDepth = l;
                 Hidden = true;
                 ownedPlayer.OrderCardPositions();
             });
-            
+        }
+
+        private bool k = false;
+        
+        public void Quartet(Player.Corner corner, Vector2 wantedPosition)
+        {
+            Task.Factory.StartNew(() =>
+            {
+                // Sorry for this stupid hack but this will take care that it's in the correct state and doesn't 
+                // show the card to all the players in a big size instead, but gets it in a row!
+                k = true;
+                
+                Hidden = false;
+                lerpSpeed *= 2;
+                
+                SetWantedPosition(wantedPosition);
+
+                Task.Delay(5000).Wait();
+
+                Vector2 cornerPosition = new Vector2();
+                bool right, down;
+                string cornerstring = corner.ToString().ToLower();
+                right = cornerstring.Contains("right");
+                down = cornerstring.StartsWith("down");
+
+                if (right) cornerPosition.X = Screen.Width;
+                else cornerPosition.X = -Width;
+
+                if (down) cornerPosition.Y = Screen.Height;
+                else cornerPosition.Y = -Height;
+                
+                SetWantedPosition(cornerPosition);
+                SetWantedSize(new Vector2(0));
+
+                Task.Delay(4000).Wait();
+
+                SceneManager.CurrentScene.Destroy(this);
+            });
         }
 
         public override void Update(float dt)
         {
-            Position = Vector2.Lerp(Position, wantedPosition, MathHelper.Clamp(lerpSpeed, 0, 1) * dt);
-            Size = Vector2.Lerp(Size, wantedSize, MathHelper.Clamp(lerpSpeed, 0, 1) * dt);
+            Position = Vector2.Lerp(Position, wantedPosition, MathHelper.Clamp(lerpSpeed * dt, 0, 1));
+            Size = Vector2.Lerp(Size, wantedSize, MathHelper.Clamp(lerpSpeed * dt * 50, 0, 1) * dt);
         }
 
         public override string ToString()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Kwartet.Desktop.Online;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -34,20 +35,39 @@ namespace Kwartet.Desktop.Core
             EntitiesInScene.Add(entity);
         }
 
+        public void Destroy(Entity entity)
+        {
+            EntitiesInScene.Remove(entity);
+        }
+
         public virtual void Initialize() { }
         public virtual void LoadContent() { }
         public virtual void UnloadContent() { }
-        public virtual void Update(GameTime dt) { }
 
+        public void Update(GameTime dt)
+        {
+            BeforeUpdate(dt);
+
+            foreach (var entity in EntitiesInScene.ToList())
+            {
+                entity.Update((float)dt.ElapsedGameTime.TotalSeconds);
+            }
+        }
+        
         public void Draw(GameTime dt)
         {
             BeforeDraw(dt);
-            // TODO : Draw entities in scene
+            foreach (var entity in EntitiesInScene.ToList())
+            {
+                entity.Draw(SpriteBatch);
+            }
             AfterDraw(dt);
         }
         
         public virtual void BeforeDraw(GameTime dt) { }
         public virtual void AfterDraw(GameTime dt) {}
+        public virtual void BeforeUpdate(GameTime dt) { }
+
         
     }
 }

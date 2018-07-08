@@ -9,7 +9,7 @@ namespace Kwartet.Desktop.Core
 {
     public class SceneManager
     {
-        public Scene CurrentScene { get; private set; }
+        public static Scene CurrentScene { get; private set; }
         
         internal Online.Game Games { get; }
         internal ContentManager Content { get; }
@@ -45,7 +45,7 @@ namespace Kwartet.Desktop.Core
         
         public void Update(GameTime gameTime)
         {
-            CurrentScene?.Update(gameTime);
+            CurrentScene?.BeforeUpdate(gameTime);
         }
 
         public void Draw(GameTime gameTime)

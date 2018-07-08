@@ -2,12 +2,13 @@
 {
     public enum CardCategory
     {
-        Teachers,
-        Places,
-        Movies,
-        Students,
-        Gestures,
+        Docenten,
+        Plaatsen,
+        Films,
+        Noobs,
+        HandGebaren,
         Top10Moppen,
         Memes,
+        KantineOpSchool
     }
 }

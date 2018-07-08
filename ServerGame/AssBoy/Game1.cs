@@ -47,7 +47,7 @@ namespace Kwartet.Desktop
             server = new WebServer();
             renderTarget = new RenderTarget2D(GraphicsDevice, 1280, 720);
             Screen.InitScreen(renderTarget);
-            _game = new Desktop.Online.Game(server, Content);            
+            _game = new Desktop.Online.Game(server, Content, GraphicsDevice);            
             _game.Start();
             
             server.Subscribe(ClientToServerStatus.Join, (a) =>

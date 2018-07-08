@@ -5,6 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Kwartet.Desktop.Cards;
+using Kwartet.Desktop.Core;
 using Kwartet.Desktop.Scenes;
 using Microsoft.Xna.Framework;
 
@@ -17,7 +18,6 @@ namespace Kwartet.Desktop.Online
         public bool IsHost { get; }
         public readonly List<Card> CardsInHand = new List<Card>();
         public Corner PlayerCorner { get; private set; }
-        
         
         public int Quartets { get; private set; }
         
@@ -119,7 +119,25 @@ namespace Kwartet.Desktop.Online
                 if (!QuartetCategory(category)) continue;
                 
                 // get all cards from this category
-                var cards = CardsInHand.Where(x => x.ServerCard.category == category);
+                var cards = CardsInHand.Where(x => x.ServerCard.category == category).ToList();
+                
+                // add these cards in the current scene
+                int index = 0;
+                Vector2 startPos = new Vector2(Screen.Width/2, Screen.Height/2);
+                startPos.X  -= cards.ToArray()[0].Width * 2;
+                startPos.Y -= cards.ToArray()[0].Height / 2;
+                
+                foreach (var card in cards)
+                {
+                    Vector2 newPos = startPos;
+                    newPos.X += index * card.Width;
+                    
+                    card.Quartet(PlayerCorner, newPos);
+                    SceneManager.CurrentScene?.AddEntity(card);
+
+                    index++;
+                }
+                
                 RemoveCards(cards); // remove these cards.
 
                 Quartets++; // This guy has a new quartet! Awesome! 
